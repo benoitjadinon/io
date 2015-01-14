@@ -29,7 +29,7 @@ Initial Release
     </metadata>
     <files>
         <!-- PCL -->
-        <file src="..\src\Acr.IO\Release\bin\Acr.IO.dll" target="lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid10+Xamarin.iOS10\Acr.IO.dll" />
+        <file src="..\src\Acr.IO\bin\Release\Acr.IO.dll" target="lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid10+Xamarin.iOS10\Acr.IO.dll" />
 
         <!-- android -->
         <file src="..\src\Acr.IO.Android\bin\Release\Acr.IO.dll" target="lib\MonoAndroid10\Acr.IO.dll" />

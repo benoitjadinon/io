@@ -9,8 +9,7 @@ namespace Acr.IO {
         private readonly UIView view;
 
 
-        public FileViewerInterationDelegate()
-            : base() {
+        public FileViewerInterationDelegate() {
             this.controller = Utils.GetTopViewController();
             this.view = Utils.GetTopView();
         }

@@ -23,9 +23,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\readme.md = ..\readme.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Acr.IO.Windows", "Acr.IO.Windows\Acr.IO.Windows.csproj", "{452A5A92-9194-4C1D-9775-382A44785336}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Acr.IO.Shared\Acr.IO.Shared.projitems*{a15fd6bd-96e8-4094-8647-fec769dc38de}*SharedItemsImports = 13
+		Acr.IO.Shared\Acr.IO.Shared.projitems*{452a5a92-9194-4c1d-9775-382a44785336}*SharedItemsImports = 4
 		Acr.IO.Shared\Acr.IO.Shared.projitems*{89bc5ee7-8d42-4bdd-8bbc-50dba700c0a9}*SharedItemsImports = 4
 		Acr.IO.Shared\Acr.IO.Shared.projitems*{5833ed04-4638-472d-911a-728b7a03c0d1}*SharedItemsImports = 4
 		Acr.IO.Shared\Acr.IO.Shared.projitems*{a35e0d2e-f509-4925-8d08-293c330a8e08}*SharedItemsImports = 4
@@ -51,6 +54,10 @@ Global
 		{5833ED04-4638-472D-911A-728B7A03C0D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5833ED04-4638-472D-911A-728B7A03C0D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5833ED04-4638-472D-911A-728B7A03C0D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{452A5A92-9194-4C1D-9775-382A44785336}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{452A5A92-9194-4C1D-9775-382A44785336}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{452A5A92-9194-4C1D-9775-382A44785336}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{452A5A92-9194-4C1D-9775-382A44785336}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -59,5 +66,6 @@ Global
 		{A35E0D2E-F509-4925-8D08-293C330A8E08} = {5D70461B-E25A-4251-9084-480B02E4F0CB}
 		{89BC5EE7-8D42-4BDD-8BBC-50DBA700C0A9} = {5D70461B-E25A-4251-9084-480B02E4F0CB}
 		{5833ED04-4638-472D-911A-728B7A03C0D1} = {5D70461B-E25A-4251-9084-480B02E4F0CB}
+		{452A5A92-9194-4C1D-9775-382A44785336} = {5D70461B-E25A-4251-9084-480B02E4F0CB}
 	EndGlobalSection
 EndGlobal

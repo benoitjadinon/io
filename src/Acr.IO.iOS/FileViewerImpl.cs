@@ -1,4 +1,5 @@
 ﻿using System;
+using Foundation;
 using UIKit;
 
 
@@ -9,7 +10,8 @@ namespace Acr.IO {
 		public bool Open(IFile file) {
 			var opened = false;
 
-			if (url.IsFileUrl && UIApplication.SharedApplication.CanOpenUrl(url)) {
+            var url = NSUrl.FromFilename(file.FullName);
+			if (url.IsFileUrl) {
 				using (var controller = UIDocumentInteractionController.FromUrl(url)) {
 					UIApplication.SharedApplication.InvokeOnMainThread(() => {
 						controller.Delegate = new FileViewerInterationDelegate(); 

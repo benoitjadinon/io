@@ -37,6 +37,7 @@
   <ItemGroup>
     <Compile Include="FileViewerImpl.cs" />
     <Compile Include="FileViewerInteractionDelegate.cs" />
+    <Compile Include="Utils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
