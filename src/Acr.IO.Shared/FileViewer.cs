@@ -4,7 +4,6 @@
 namespace Acr.IO {
 
     public static class FileViewer {
-
         private static IFileViewer instance;
         private static readonly object syncLock = new object();
 

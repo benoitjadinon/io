@@ -3,8 +3,10 @@
     <metadata>
         <id>Acr.IO</id>
         <version>2.0.0</version>
-        <title>File System (IO) Plugin for Xamarin and Windows</title>
-        <description></description>
+        <title>File System (IO) Xplat Plugin for Xamarin and Windows</title>
+        <description>
+Work with the file system with the standard directory/file layout
+        </description>
         <authors>Allan Ritchie</authors>
         <owners>Allan Ritchie</owners>
         <licenseUrl>http://opensource.org/licenses/ms-pl.html</licenseUrl>
@@ -38,6 +40,6 @@ Initial Release
         <file src="..\src\Acr.IO.iOS\bin\iPhone\Release\Acr.IO.dll" target="lib\Xamarin.iOS10\Acr.IO.dll" />
 
         <!-- win universal -->
-        <file src="..\src\Acr.IO.Windows\bin\Release\Acr.IO.dll" target="lib\wp8\Acr.IO.dll" />
+        <!--<file src="..\src\Acr.IO.Windows\bin\Release\Acr.IO.dll" target="lib\wp8\Acr.IO.dll" />-->
     </files>
 </package>

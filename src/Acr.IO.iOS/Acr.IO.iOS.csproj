@@ -46,12 +46,6 @@
     <Reference Include="System.Core" />
     <Reference Include="Xamarin.iOS" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Acr.IO.Interfaces\Acr.IO.Interfaces.csproj">
-      <Project>{365a82a9-a8a8-4608-855a-c39be0818b5a}</Project>
-      <Name>Acr.IO.Interfaces</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="..\Acr.IO.Shared\Acr.IO.Shared.projitems" Label="Shared" Condition="Exists('..\Acr.IO.Shared\Acr.IO.Shared.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

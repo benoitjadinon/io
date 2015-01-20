@@ -10,7 +10,6 @@ using Env = Android.OS.Environment;
 namespace Acr.IO {
 
     public class FileViewerImpl : IFileViewer {
-
         private readonly string externalDirectory;
 
 
