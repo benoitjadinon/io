@@ -17,16 +17,6 @@ Work with the file system with the standard directory/file layout
 2.0
 Bait and switch design
 New file viewer service
-Added mime type to IFile.  Only valid in android at the moment.
-
-1.2
-Update to profile 259
-
-1.1
-Updates to iOS8 file structure
-
-1.0
-Initial Release
         </releaseNotes>
     </metadata>
     <files>
@@ -38,6 +28,9 @@ Initial Release
 
         <!-- ios -->
         <file src="..\src\Acr.IO.iOS\bin\iPhone\Release\Acr.IO.dll" target="lib\Xamarin.iOS10\Acr.IO.dll" />
+
+        <!-- wp8 -->
+        <file src="..\src\Acr.IO.WindowsPhone\bin\Release\Acr.IO.dll" target="lib\wp8\Acr.IO.dll" />
 
         <!-- win universal -->
         <!--<file src="..\src\Acr.IO.Windows\bin\Release\Acr.IO.dll" target="lib\wp8\Acr.IO.dll" />-->

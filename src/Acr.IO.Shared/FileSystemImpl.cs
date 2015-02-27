@@ -11,7 +11,7 @@ namespace Acr.IO {
     public class FileSystemImpl : IFileSystem {
 
         public FileSystemImpl() {
-#if __WINDOWS__
+#if WINDOWS_PHONE
             var path = Windows.Storage.ApplicationData.Current.LocalFolder.Path;
             this.AppData = new Directory(path);
             this.Cache = new Directory(Path.Combine(path, "Cache"));

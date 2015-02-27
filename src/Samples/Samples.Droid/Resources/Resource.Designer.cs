@@ -9,9 +9,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: global::Android.Runtime.ResourceDesignerAttribute("Acr.IO.Resource", IsApplication=false)]
+[assembly: global::Android.Runtime.ResourceDesignerAttribute("Samples.Droid.Resource", IsApplication=true)]
 
-namespace Acr.IO
+namespace Samples.Droid
 {
 	
 	
@@ -22,6 +22,12 @@ namespace Acr.IO
 		static Resource()
 		{
 			global::Android.Runtime.ResourceIdManager.UpdateIdValues();
+		}
+		
+		public static void UpdateIdValues()
+		{
+			global::Acr.IO.Resource.String.ApplicationName = global::Samples.Droid.Resource.String.ApplicationName;
+			global::Acr.IO.Resource.String.Hello = global::Samples.Droid.Resource.String.Hello;
 		}
 		
 		public partial class Attribute
@@ -37,14 +43,30 @@ namespace Acr.IO
 			}
 		}
 		
+		public partial class Drawable
+		{
+			
+			// aapt resource value: 0x7f020000
+			public const int icon = 2130837504;
+			
+			static Drawable()
+			{
+				global::Android.Runtime.ResourceIdManager.UpdateIdValues();
+			}
+			
+			private Drawable()
+			{
+			}
+		}
+		
 		public partial class String
 		{
 			
-			// aapt resource value: 0x7f020001
-			public static int ApplicationName = 2130837505;
+			// aapt resource value: 0x7f030001
+			public const int ApplicationName = 2130903041;
 			
-			// aapt resource value: 0x7f020000
-			public static int Hello = 2130837504;
+			// aapt resource value: 0x7f030000
+			public const int Hello = 2130903040;
 			
 			static String()
 			{
