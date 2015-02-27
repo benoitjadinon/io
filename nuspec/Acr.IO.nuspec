@@ -3,7 +3,7 @@
     <metadata>
         <id>Acr.IO</id>
         <version>2.0.0</version>
-        <title>File System (IO) Xplat Plugin for Xamarin and Windows</title>
+        <title>ACR File System (IO) Plugin for Xamarin and Windows</title>
         <description>
 Work with the file system with the standard directory/file layout
         </description>
