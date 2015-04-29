@@ -1,5 +1,4 @@
 ﻿using System;
-using Acr.IO;
 using Android.App;
 using Android.Content.PM;
 using Android.OS;
@@ -15,8 +14,6 @@ namespace Samples.Droid {
             base.OnCreate(bundle);
 
             Forms.Init(this, bundle);
-            FileSystem.Init();
-            FileViewer.Init();
             this.LoadApplication(new App());
         }
     }

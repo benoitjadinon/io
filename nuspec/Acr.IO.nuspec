@@ -14,6 +14,9 @@ Work with the file system with the standard directory/file layout
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <tags>xamarin windows xam.pcl file io</tags>
         <releaseNotes>
+2.0.1
+No need for Init
+
 2.0
 Bait and switch design
 New file viewer service
