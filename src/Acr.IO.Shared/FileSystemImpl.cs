@@ -1,6 +1,9 @@
 ﻿#if __PLATFORM__
 using System;
 using System.IO;
+using System.Linq;
+
+
 #if __IOS__
 using UIKit;
 using Foundation;
@@ -28,12 +31,22 @@ namespace Acr.IO {
             this.Temp = new Directory(Path.Combine(documents, "..", "tmp"));
             this.Public = new Directory(documents);
 #elif __ANDROID__
+            var ctx = Android.App.Application.Context;
             this.AppData = new Directory(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
-            this.Cache = new Directory(Android.App.Application.Context.CacheDir.AbsolutePath);
-            this.Temp = new Directory(Android.App.Application.Context.CacheDir.AbsolutePath);
-            this.Public = new Directory(Android.App.Application.Context.GetExternalFilesDir(null).AbsolutePath);
+
+            var cacheDirs = ctx.GetExternalCacheDirs();
+            if (cacheDirs != null && cacheDirs.Length > 0) {
+                var cachePath = cacheDirs.First().AbsolutePath;
+                this.Cache = new Directory(cachePath);
+                this.Temp = new Directory(cachePath);
+            }
+            var ext = ctx.GetExternalFilesDir(null);
+            if (ext != null)
+                this.Public = new Directory(ext.AbsolutePath);
 #endif
         }
+
+
 
         public IDirectory AppData { get; private set; }
         public IDirectory Cache { get; private set; }
