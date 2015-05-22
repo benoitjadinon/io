@@ -31,27 +31,29 @@ namespace Acr.IO {
             this.Temp = new Directory(Path.Combine(documents, "..", "tmp"));
             this.Public = new Directory(documents);
 #elif __ANDROID__
-            var ctx = Android.App.Application.Context;
-            this.AppData = new Directory(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
+            try {
+                var ctx = Android.App.Application.Context;
+                this.AppData = new Directory(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments));
 
-            var cacheDirs = ctx.GetExternalCacheDirs();
-            if (cacheDirs != null && cacheDirs.Length > 0) {
-                var cachePath = cacheDirs.First().AbsolutePath;
-                this.Cache = new Directory(cachePath);
-                this.Temp = new Directory(cachePath);
+                var ext = ctx.GetExternalFilesDir(null);
+                if (ext != null)
+                    this.Public = new Directory(ext.AbsolutePath);
+
+                var cacheDir = ctx.GetExternalFilesDir(null);
+                if (cacheDir != null) {
+                    this.Cache = new Directory(cacheDir.AbsolutePath);
+                    this.Temp = new Directory(cacheDir.AbsolutePath);
+                }
             }
-            var ext = ctx.GetExternalFilesDir(null);
-            if (ext != null)
-                this.Public = new Directory(ext.AbsolutePath);
+            catch { }
 #endif
         }
 
 
-
-        public IDirectory AppData { get; private set; }
-        public IDirectory Cache { get; private set; }
-        public IDirectory Public { get; private set; }
-        public IDirectory Temp { get; private set; }
+        public IDirectory AppData { get; set; }
+        public IDirectory Cache { get; set; }
+        public IDirectory Public { get; set; }
+        public IDirectory Temp { get; set; }
 
 
         public IDirectory GetDirectory(string path) {
