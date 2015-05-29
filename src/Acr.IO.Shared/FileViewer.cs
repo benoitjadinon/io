@@ -16,7 +16,7 @@ namespace Acr.IO {
 #if __PLATFORM__
                             instance = new FileViewerImpl();
 #else
-                            throw new Exception("Platform implementation not found.  Have you added a nuget reference to your platform project?");
+                            throw new NotImplementedException("Platform implementation not found.  Have you added a nuget reference to your platform project?");
 #endif
                         }
                     }
