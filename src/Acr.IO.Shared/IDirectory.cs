@@ -4,14 +4,9 @@ using System.Collections.Generic;
 
 namespace Acr.IO {
 
-    public interface IDirectory {
+	public interface IDirectory : IBaseDirectory<IDirectory, IFile> {
 
-        string Name { get; }
         string FullName { get; }
-        bool Exists { get; }
-
-        IDirectory Root { get; }
-        IDirectory Parent { get; }
 
         DateTime CreationTime { get; }
         DateTime LastAccessTime { get; }
@@ -21,10 +16,28 @@ namespace Acr.IO {
         void MoveTo(string path);
         void Delete(bool recursive = false);
 
-        bool FileExists(string fileName);
-        IFile CreateFile(string name);
         IDirectory CreateSubdirectory(string name);
-        IEnumerable<IDirectory> Directories { get; }
-        IEnumerable<IFile> Files { get; }
+
+		IDirectory Root { get; }
+        IDirectory Parent { get; }
     }
+
+    public interface IBaseDirectory<T, TF> {
+
+		string Name { get; }
+
+		bool Exists { get; }
+
+		bool FileExists(string fileName);
+
+		T GetSubDirectory(string dirName);
+		IEnumerable<T> Directories { get; }
+		IEnumerable<TF> Files { get; }
+
+		TF GetFile(string name);
+    }
+
+	public interface IReadOnlyDirectory : IBaseDirectory<IReadOnlyDirectory, IReadOnlyFile> {
+
+	}
 }

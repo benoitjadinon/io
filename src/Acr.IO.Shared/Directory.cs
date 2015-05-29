@@ -4,6 +4,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
+#if __ANDROID__
+using Android.App;
+using Android.Content;
+using Android.Content.Res;
+using Env = Android.OS.Environment;
+#endif
 
 namespace Acr.IO {
 
@@ -82,7 +88,7 @@ namespace Acr.IO {
         }
 
 
-        public IFile CreateFile(string fileName) {
+        public IFile GetFile(string fileName) {
             var path = Path.Combine(this.FullName, fileName);
             return new File(new FileInfo(path));
         }
@@ -98,6 +104,10 @@ namespace Acr.IO {
             this.info.Delete(recursive);
         }
 
+		public IDirectory GetSubDirectory (string dirName)
+		{
+			return new Directory(Path.Combine(info.FullName, dirName));
+		}
 
         private IEnumerable<IDirectory> directories;
         public IEnumerable<IDirectory> Directories {
@@ -115,8 +125,77 @@ namespace Acr.IO {
                 return this.files;
             }
         }
-
         #endregion
     }
+
+#if __ANDROID__
+
+	public class AndroidAssetDirectory : IReadOnlyDirectory {
+
+		//TODO: lazy?
+		readonly AssetManager assetManager;
+
+		string path;
+
+		public AndroidAssetDirectory (string path = "")
+		{
+			this.path = path;
+			assetManager = Application.Context.Assets;
+		}
+
+		#region IDirectory implementation
+
+		public virtual bool FileExists (string fileName)
+		{
+			var file = GetFile(fileName);
+			return file != null && file.Exists;
+		}
+
+		public virtual IReadOnlyFile GetFile (string name)
+		{
+			return new AndroidAssetFile(name);
+		}
+
+		public virtual string Name {
+			get {
+				return path;
+			}
+		}
+
+		public virtual bool Exists {
+			get {
+				return true;
+			}
+		}
+
+		public IReadOnlyDirectory GetSubDirectory (string dirName)
+		{
+			return new AndroidAssetDirectory(Path.Combine(path, dirName));
+		}
+
+		public virtual IEnumerable<IReadOnlyDirectory> Directories {
+			get {
+				return assetManager.List(path).Where(p => assetManager.List(p).Length > 0).Select(p => new AndroidAssetDirectory(p));
+			}
+		}
+
+		public virtual IEnumerable<IReadOnlyFile> Files {
+			get {
+				var list = assetManager.List(path).Where(p => assetManager.List(p).Length == 0);
+				return list.Select(p => new AndroidAssetFile(p));
+			}
+		}
+
+		#endregion
+
+
+		protected virtual string GetFilePath (string name)
+		{
+			var res = assetManager.List(name);
+			return res.FirstOrDefault();
+		}
+	}
+#endif
+
 }
 #endif

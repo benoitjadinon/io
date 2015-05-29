@@ -15,7 +15,7 @@ namespace Acr.IO {
         /// <param name="fileName"></param>
         /// <returns></returns>
         public static IFile GetFile(this IDirectory directory, string fileName) {
-            return directory.GetExistingFile(fileName) ?? directory.CreateFile(fileName);
+            return directory.GetExistingFile(fileName) ?? directory.GetFile(fileName);
         }
 
 

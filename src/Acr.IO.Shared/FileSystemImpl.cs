@@ -20,6 +20,7 @@ namespace Acr.IO {
             this.Cache = new Directory(Path.Combine(path, "Cache"));
             this.Public = new Directory(Path.Combine(path, "Public"));
             this.Temp = new Directory(Path.Combine(path, "Temp"));
+			this.Assets = new Directory(Path.Combine(Windows.ApplicationModel.Package.Current.InstalledLocation, "Assets"));
 #elif __IOS__
             var documents = UIDevice.CurrentDevice.CheckSystemVersion(8, 0)
                 ? NSFileManager.DefaultManager.GetUrls (NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomain.User)[0].Path
@@ -30,6 +31,7 @@ namespace Acr.IO {
             this.Cache = new Directory(Path.Combine(library, "Caches"));
             this.Temp = new Directory(Path.Combine(documents, "..", "tmp"));
             this.Public = new Directory(documents);
+			this.Assets = new Directory(NSBundle.MainBundle.BundlePath);
 #elif __ANDROID__
             try {
                 var ctx = Android.App.Application.Context;
@@ -44,16 +46,20 @@ namespace Acr.IO {
                     this.Cache = new Directory(cacheDir.AbsolutePath);
                     this.Temp = new Directory(cacheDir.AbsolutePath);
                 }
+
+				//this.Assets = new Directory("file:///android_asset"); // that's for webviews only
+				this.Assets = new AndroidAssetDirectory();
             }
-            catch { }
+            finally {}
 #endif
         }
 
 
-        public IDirectory AppData { get; set; }
-        public IDirectory Cache { get; set; }
-        public IDirectory Public { get; set; }
-        public IDirectory Temp { get; set; }
+		public IDirectory AppData { get; protected set; }
+		public IDirectory Cache { get; protected set; }
+		public IDirectory Public { get; protected set; }
+        public IDirectory Temp { get; protected set; }
+		public IReadOnlyDirectory Assets { get; protected set; }
 
 
         public IDirectory GetDirectory(string path) {

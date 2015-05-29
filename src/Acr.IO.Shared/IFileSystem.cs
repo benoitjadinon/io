@@ -1,6 +1,5 @@
 ﻿using System;
 
-
 namespace Acr.IO {
 
     public interface IFileSystem {
@@ -9,6 +8,7 @@ namespace Acr.IO {
         IDirectory Cache { get; }
         IDirectory Public { get; }
         IDirectory Temp { get; }
+		IReadOnlyDirectory Assets { get; }
 
         IDirectory GetDirectory(string path);
         IFile GetFile(string path);

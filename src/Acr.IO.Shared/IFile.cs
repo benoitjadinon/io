@@ -4,25 +4,42 @@ using System.IO;
 
 namespace Acr.IO {
 
-    public interface IFile {
+	public interface IFile : IBaseFile<IFile, IDirectory> {
 
-        string Name { get; }
-        string FullName { get; }
-        string Extension { get; }
-        long Length { get; }
-        bool Exists { get; }
-        string MimeType { get; }
+		string FullName { get; }
 
         Stream Create();
-        Stream OpenRead();
         Stream OpenWrite();
+
         void MoveTo(string path);
-        IFile CopyTo(string path);
         void Delete();
 
-        IDirectory Directory { get; }
         DateTime LastAccessTime { get; }
         DateTime LastWriteTime { get; }
         DateTime CreationTime { get; }
     }
+
+    public interface IBaseFile<T,TD>
+    	//where T:IBaseFile<T>
+     	//where TD:IBaseDirectory 
+    {
+
+		string Name { get; }
+        string Extension { get; }
+
+		bool Exists { get; }
+    	
+		long Length { get; }
+        string MimeType { get; }
+
+		Stream OpenRead();
+
+		IFile CopyTo(string path);
+
+		TD Directory { get; }
+    }
+
+	public interface IReadOnlyFile : IBaseFile<IReadOnlyFile, IReadOnlyDirectory> {
+
+	}
 }

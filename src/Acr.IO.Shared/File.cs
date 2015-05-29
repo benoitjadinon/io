@@ -1,11 +1,16 @@
 #if __PLATFORM__
 using System;
 using System.IO;
+using System.Linq;
 
+#if __ANDROID__
+using Android.App;
+using Android.Content.Res;
+#endif
 
 namespace Acr.IO {
 
-    public class File : IFile {
+	public class File : IFile {
         private readonly FileInfo info;
 
 
@@ -109,15 +114,6 @@ namespace Acr.IO {
 
         private string GetMimeType() {
 			var ext = Path.GetExtension(this.Name);
-
-#if __ANDROID__
-			if (ext == null)
-				return "*.*";
-
-			ext = ext.ToLower().TrimStart('.');
-			var mimeType = Android.Webkit.MimeTypeMap.Singleton.GetMimeTypeFromExtension(ext);
-			return mimeType ?? "*.*";
-#else
 //			if (ext == null)
 //				return String.Empty;
 //
@@ -129,8 +125,92 @@ namespace Acr.IO {
 //			case ".docs": return "application/";
 //			}
             return String.Empty;
-#endif
         }
     }
+
+#if __ANDROID__
+
+	public class AndroidAssetFile : IReadOnlyFile {
+
+		readonly AssetManager assetManager;
+
+		string name;
+		string path = "";
+
+		public AndroidAssetFile (string name, string path = "")
+		{
+			this.path = path;
+			this.name = name;
+			assetManager = Application.Context.Assets;
+		}
+
+		#region IBaseFile implementation
+
+		public Stream OpenRead ()
+		{
+			return assetManager.Open(name);
+		}
+
+		public IFile CopyTo (string path)
+		{
+			//use stream
+			throw new NotImplementedException ();
+		}
+
+		public string Name {
+			get {
+				return name;
+			}
+		}
+
+		public string Extension {
+			get {
+				return Path.GetExtension(this.Name);
+			}
+		}
+
+		public bool Exists {
+			get {				
+				return assetManager.List (path).Any (p => p == this.name);
+			}
+		}
+
+		public IReadOnlyDirectory Directory {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+
+		public long Length {
+			get {
+				return assetManager.OpenFd(name).Length;
+			}
+		}
+
+		private string mimeType;
+        public string MimeType {
+            get {
+                this.mimeType = this.mimeType ?? GetMimeType();
+                return this.mimeType;
+            }
+        }
+
+		#endregion
+
+
+		string GetMimeType ()
+		{
+			var ext = Path.GetExtension(this.Name);
+
+			if (ext == null)
+				return "*.*";
+
+			ext = ext.ToLower().TrimStart('.');
+			var mimeType = Android.Webkit.MimeTypeMap.Singleton.GetMimeTypeFromExtension(ext);
+			return mimeType ?? "*.*";
+		}
+	}
+#endif
 }
 #endif
