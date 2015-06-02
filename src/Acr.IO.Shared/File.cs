@@ -211,6 +211,90 @@ namespace Acr.IO {
 			return mimeType ?? "*.*";
 		}
 	}
+
+#elif __IOS__
+
+public class IOSAssetsFile : IReadOnlyFile {
+
+		string name;
+		string path = "";
+
+		public IOSAssetsFile (string name, string path = "")
+		{
+			this.path = path;
+			this.name = name;
+		}
+
+		#region IBaseFile implementation
+
+		public Stream OpenRead ()
+		{
+			//TODO:use stream
+			return new FileStream(
+		}
+
+		public IFile CopyTo (string path)
+		{
+			//TODO:use stream
+			throw new NotImplementedException ();
+		}
+
+		public string Name {
+			get {
+				return name;
+			}
+		}
+
+		public string Extension {
+			get {
+				return Path.GetExtension(this.Name);
+			}
+		}
+
+		public bool Exists {
+			get {				
+				return ;
+			}
+		}
+
+		public IReadOnlyDirectory Directory {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+
+		public long Length {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		private string mimeType;
+        public string MimeType {
+            get {
+                this.mimeType = this.mimeType ?? GetMimeType();
+                return this.mimeType;
+            }
+        }
+
+		#endregion
+
+
+		string GetMimeType ()
+		{
+			var ext = Path.GetExtension(this.Name);
+
+			if (ext == null)
+				return "*.*";
+
+			ext = ext.ToLower().TrimStart('.');
+			var mimeType = Android.Webkit.MimeTypeMap.Singleton.GetMimeTypeFromExtension(ext);
+			return mimeType ?? "*.*";
+		}
+	}
 #endif
+
+
 }
 #endif

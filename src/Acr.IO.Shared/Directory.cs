@@ -10,6 +10,9 @@ using Android.Content;
 using Android.Content.Res;
 using Env = Android.OS.Environment;
 #endif
+#if __IOS__
+using Foundation;
+#endif
 
 namespace Acr.IO {
 
@@ -193,13 +196,69 @@ namespace Acr.IO {
 		}
 
 		#endregion
+	}
 
+#elif __IOS__
 
-		protected virtual string GetFilePath (string name)
+	public class IOSAssetsDirectory : IReadOnlyDirectory {
+
+		string path;
+
+		public IOSAssetsDirectory (string path = "")
 		{
-			var res = assetManager.List(name);
-			return res.FirstOrDefault();
+			this.path = path ?? NSBundle.MainBundle.BundlePath;
 		}
+		public IOSAssetsDirectory (string root, string subPath)
+			:this(Path.Combine(root, subPath))
+		{
+		}
+
+		#region IDirectory implementation
+
+		public virtual bool FileExists (string fileName)
+		{
+			var file = GetFile(fileName);
+			return file != null && file.Exists;
+		}
+
+		public virtual IReadOnlyFile GetFile (string name)
+		{
+			return new IOSAssetsFile(name, path);
+		}
+
+		public virtual string Name {
+			get {
+				return path;
+			}
+		}
+
+		public virtual bool Exists {
+			get {
+				return true;
+			}
+		}
+
+		public IReadOnlyDirectory GetSubDirectory (string dirName)
+		{
+			return new IOSAssetsDirectory(root:path, subPath:dirName);
+		}
+
+		public virtual IEnumerable<IReadOnlyDirectory> Directories {
+			get {
+				//return assetManager.List(path).Where(p => assetManager.List(p).Length > 0).Select(p => new AndroidAssetDirectory(p));
+				throw new NotImplementedException();
+			}
+		}
+
+		public virtual IEnumerable<IReadOnlyFile> Files {
+			get {
+				//var list = assetManager.List(path).Where(p => assetManager.List(p).Length == 0);
+				//return list.Select(p => new AndroidAssetFile(p, path));
+				throw new NotImplementedException();
+			}
+		}
+
+		#endregion
 	}
 #endif
 

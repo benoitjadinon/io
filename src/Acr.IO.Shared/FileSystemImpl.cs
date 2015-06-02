@@ -31,7 +31,7 @@ namespace Acr.IO {
             this.Cache = new Directory(Path.Combine(library, "Caches"));
             this.Temp = new Directory(Path.Combine(documents, "..", "tmp"));
             this.Public = new Directory(documents);
-			this.Assets = new Directory(NSBundle.MainBundle.BundlePath);
+			this.Assets = new IOSAssetsDirectory();
 #elif __ANDROID__
             try {
                 var ctx = Android.App.Application.Context;
