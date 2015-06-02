@@ -109,5 +109,9 @@
   -->
   <ItemGroup>
     <AndroidAsset Include="Assets\Default.png" />
+    <AndroidAsset Include="Assets\SubFolder\Icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Assets\SubFolder\" />
   </ItemGroup>
 </Project>

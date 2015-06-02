@@ -153,7 +153,7 @@ namespace Acr.IO {
 
 		public IFile CopyTo (string path)
 		{
-			//use stream
+			//TODO:use stream
 			throw new NotImplementedException ();
 		}
 

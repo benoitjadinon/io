@@ -4,6 +4,9 @@ using System.IO;
 
 namespace Acr.IO {
 
+	public interface IReadOnlyFile : IBaseFile<IReadOnlyFile, IReadOnlyDirectory> {
+	}
+
 	public interface IFile : IBaseFile<IFile, IDirectory> {
 
 		string FullName { get; }
@@ -23,7 +26,6 @@ namespace Acr.IO {
     	//where T:IBaseFile<T>
      	//where TD:IBaseDirectory 
     {
-
 		string Name { get; }
         string Extension { get; }
 
@@ -38,8 +40,4 @@ namespace Acr.IO {
 
 		TD Directory { get; }
     }
-
-	public interface IReadOnlyFile : IBaseFile<IReadOnlyFile, IReadOnlyDirectory> {
-
-	}
 }

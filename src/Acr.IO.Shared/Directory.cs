@@ -132,6 +132,7 @@ namespace Acr.IO {
 
 	public class AndroidAssetDirectory : IReadOnlyDirectory {
 
+		//TODO: parent support
 		//TODO: lazy?
 		readonly AssetManager assetManager;
 
@@ -141,6 +142,10 @@ namespace Acr.IO {
 		{
 			this.path = path;
 			assetManager = Application.Context.Assets;
+		}
+		public AndroidAssetDirectory (string root, string subPath)
+			:this(Path.Combine(root, subPath))
+		{
 		}
 
 		#region IDirectory implementation
@@ -153,7 +158,7 @@ namespace Acr.IO {
 
 		public virtual IReadOnlyFile GetFile (string name)
 		{
-			return new AndroidAssetFile(name);
+			return new AndroidAssetFile(name, path);
 		}
 
 		public virtual string Name {
@@ -164,13 +169,14 @@ namespace Acr.IO {
 
 		public virtual bool Exists {
 			get {
+				// TODO: list parent and search for itself
 				return true;
 			}
 		}
 
 		public IReadOnlyDirectory GetSubDirectory (string dirName)
 		{
-			return new AndroidAssetDirectory(Path.Combine(path, dirName));
+			return new AndroidAssetDirectory(root:path, subPath:dirName);
 		}
 
 		public virtual IEnumerable<IReadOnlyDirectory> Directories {
@@ -182,7 +188,7 @@ namespace Acr.IO {
 		public virtual IEnumerable<IReadOnlyFile> Files {
 			get {
 				var list = assetManager.List(path).Where(p => assetManager.List(p).Length == 0);
-				return list.Select(p => new AndroidAssetFile(p));
+				return list.Select(p => new AndroidAssetFile(p, path));
 			}
 		}
 

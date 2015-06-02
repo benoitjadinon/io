@@ -67,7 +67,15 @@ namespace Samples {
                             FontSize = 10,
                         },
 						new Label {
-							Text = "Assets/Resources sub-directory " + (FileSystem.Instance.Assets.GetSubDirectory("webkit").Exists ? "yes" : "no"),
+							Text = "Assets/Resources sub-directory " + (FileSystem.Instance.Assets.GetSubDirectory("SubFolder").Exists ? "yes" : "no"),
+                            FontSize = 10,
+                        },
+						new Label {
+							Text = "Assets/Resources sub-directory files " + FileSystem.Instance.Assets.GetSubDirectory("SubFolder").Files?.Count(),
+                            FontSize = 10,
+                        },
+						new Label {
+							Text = "Assets/Resources sub-directory file Icon.Png " + (FileSystem.Instance.Assets.GetSubDirectory("SubFolder").GetFile("Icon.png").Exists ? "yes" : "no"),
                             FontSize = 10,
                         },
 						new Label {
