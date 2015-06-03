@@ -12,6 +12,7 @@ using Env = Android.OS.Environment;
 #endif
 #if __IOS__
 using Foundation;
+using UIKit;
 #endif
 
 namespace Acr.IO {
@@ -93,7 +94,7 @@ namespace Acr.IO {
 
         public IFile GetFile(string fileName) {
             var path = Path.Combine(this.FullName, fileName);
-            return new File(new FileInfo(path));
+            return new File(path);
         }
 
 
@@ -112,20 +113,16 @@ namespace Acr.IO {
 			return new Directory(Path.Combine(info.FullName, dirName));
 		}
 
-        private IEnumerable<IDirectory> directories;
         public IEnumerable<IDirectory> Directories {
             get {
-                this.directories = this.directories ?? this.info.GetDirectories().Select(x => new Directory(x)).ToList();
-                return this.directories;
+                return this.info.GetDirectories().Select(x => new Directory(x)).ToList();
             }
         }
 
 
-        private IEnumerable<IFile> files;
         public IEnumerable<IFile> Files {
             get {
-                this.files = this.files ?? this.info.GetFiles().Select(x => new File(x)).ToList();
-                return this.files;
+                return this.info.GetFiles().Select(x => new File(x)).ToList();
             }
         }
         #endregion
@@ -170,6 +167,12 @@ namespace Acr.IO {
 			}
 		}
 
+		public string FullName {
+			get {
+				return path;
+			}
+		}
+
 		public virtual bool Exists {
 			get {
 				// TODO: list parent and search for itself
@@ -182,16 +185,19 @@ namespace Acr.IO {
 			return new AndroidAssetDirectory(root:path, subPath:dirName);
 		}
 
+		private IEnumerable<IReadOnlyDirectory> directories;
 		public virtual IEnumerable<IReadOnlyDirectory> Directories {
 			get {
-				return assetManager.List(path).Where(p => assetManager.List(p).Length > 0).Select(p => new AndroidAssetDirectory(p));
+				return directories ?? (directories = assetManager.List(path).Where(p => assetManager.List(p).Length > 0)
+					.Select(p => new AndroidAssetDirectory(p)));
 			}
 		}
 
+		private IEnumerable<IReadOnlyFile> files;
 		public virtual IEnumerable<IReadOnlyFile> Files {
 			get {
-				var list = assetManager.List(path).Where(p => assetManager.List(p).Length == 0);
-				return list.Select(p => new AndroidAssetFile(p, path));
+				return files ?? (files = assetManager.List(path).Where(p => assetManager.List(p).Length == 0)
+					.Select(p => new AndroidAssetFile(p, path)));
 			}
 		}
 
@@ -206,10 +212,14 @@ namespace Acr.IO {
 
 		public IOSAssetsDirectory (string path = "")
 		{
-			this.path = path ?? NSBundle.MainBundle.BundlePath;
+			this.path = !string.IsNullOrEmpty(path) ? path : NSBundle.MainBundle.BundlePath;
+			this.info = new DirectoryInfo(this.path);
 		}
 		public IOSAssetsDirectory (string root, string subPath)
 			:this(Path.Combine(root, subPath))
+		{
+		}
+		protected IOSAssetsDirectory (DirectoryInfo info) : this (info?.FullName)
 		{
 		}
 
@@ -228,7 +238,13 @@ namespace Acr.IO {
 
 		public virtual string Name {
 			get {
-				return path;
+				return this.info.Name;
+			}
+		}
+
+		public string FullName {
+			get {
+				return this.info.FullName;
 			}
 		}
 
@@ -243,21 +259,26 @@ namespace Acr.IO {
 			return new IOSAssetsDirectory(root:path, subPath:dirName);
 		}
 
+		private IEnumerable<IReadOnlyDirectory> directories;
 		public virtual IEnumerable<IReadOnlyDirectory> Directories {
-			get {
-				//return assetManager.List(path).Where(p => assetManager.List(p).Length > 0).Select(p => new AndroidAssetDirectory(p));
-				throw new NotImplementedException();
-			}
-		}
+            get {
+				return this.directories ?? (this.directories = Info.GetDirectories().Select(x => new IOSAssetsDirectory(x)).ToList());
+            }
+        }
 
+		private IEnumerable<IReadOnlyFile> files;
 		public virtual IEnumerable<IReadOnlyFile> Files {
 			get {
-				//var list = assetManager.List(path).Where(p => assetManager.List(p).Length == 0);
-				//return list.Select(p => new AndroidAssetFile(p, path));
-				throw new NotImplementedException();
+				return this.files ?? (this.files = Info.GetFiles().Select(x => new IOSAssetsFile(x)).ToList());
 			}
 		}
 
+		private DirectoryInfo info;
+		protected DirectoryInfo Info {
+			get {
+				return this.info ?? (this.info = new DirectoryInfo(path));
+			}
+		}
 		#endregion
 	}
 #endif

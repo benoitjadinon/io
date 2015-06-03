@@ -29,6 +29,8 @@ namespace Acr.IO {
 		string Name { get; }
         string Extension { get; }
 
+		Uri Uri { get; }
+
 		bool Exists { get; }
     	
 		long Length { get; }

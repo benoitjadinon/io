@@ -6,28 +6,34 @@ using System.Linq;
 #if __ANDROID__
 using Android.App;
 using Android.Content.Res;
+#elif __IOS__
+using Foundation;
 #endif
 
 namespace Acr.IO {
 
-	public class File : IFile {
-        private readonly FileInfo info;
+	public class AbstractReadOnlyFile : IReadOnlyFile
+	{
+		protected readonly FileInfo info;
 
-
-        public File(string fileName) : this(new FileInfo(fileName)) {}
-        internal File(FileInfo info) {
+		public AbstractReadOnlyFile(string fileName) : this(new FileInfo(fileName)) {}
+		internal AbstractReadOnlyFile(FileInfo info) {
             this.info = info;
         }
 
-        #region IFile Members
+		#region IBaseFile implementation
 
-        public string Name {
-            get { return this.info.Name; }
+        public Stream OpenRead() {
+            return this.info.OpenRead();
         }
 
+        public IFile CopyTo(string path) {
+            var file = this.info.CopyTo(path);
+            return new File(file);
+        }
 
-        public string FullName {
-            get { return this.info.FullName; }
+		public string Name {
+            get { return this.info.Name; }
         }
 
 
@@ -44,7 +50,6 @@ namespace Acr.IO {
             }
         }
 
-
         public long Length {
             get { return this.info.Length; }
         }
@@ -54,16 +59,53 @@ namespace Acr.IO {
             get { return this.info.Exists; }
         }
 
+		public IReadOnlyDirectory Directory {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public Uri Uri {
+			get {
+				return new UriBuilder("file", info.FullName).Uri;
+			}
+		}
+
+		#endregion
+
+		protected string GetMimeType() {
+			var ext = Path.GetExtension(this.Name);
+//			if (ext == null)
+//				return String.Empty;
+//
+//			switch (ext.ToLower()) {
+//			case ".jpg" : return "image/jpg";
+//			case ".png" : return "image/png";
+//			case ".gif" : return "image/gif";
+//			case ".pdf" : return "application/pdf";
+//			case ".docs": return "application/";
+//			}
+            return String.Empty;
+        }
+	}
+
+	public class File : AbstractReadOnlyFile, IFile {
+
+        public File(string fileName) : base(fileName) {}
+		internal File(FileInfo info) : base(info) {
+			
+		}
+
+        #region IFile Members
+
+		public string FullName {
+            get { return this.info.FullName; }
+        }
+
 
         public Stream Create() {
             return this.info.Create();
         }
-
-
-        public Stream OpenRead() {
-            return this.info.OpenRead();
-        }
-
 
         public Stream OpenWrite() {
             return this.info.OpenWrite();
@@ -73,13 +115,6 @@ namespace Acr.IO {
         public void MoveTo(string path) {
             this.info.MoveTo(path);
         }
-
-
-        public IFile CopyTo(string path) {
-            var file = this.info.CopyTo(path);
-            return new File(file);
-        }
-
 
         public void Delete() {
             this.info.Delete();
@@ -110,22 +145,6 @@ namespace Acr.IO {
         }
 
         #endregion
-
-
-        private string GetMimeType() {
-			var ext = Path.GetExtension(this.Name);
-//			if (ext == null)
-//				return String.Empty;
-//
-//			switch (ext.ToLower()) {
-//			case ".jpg" : return "image/jpg";
-//			case ".png" : return "image/png";
-//			case ".gif" : return "image/gif";
-//			case ".pdf" : return "application/pdf";
-//			case ".docs": return "application/";
-//			}
-            return String.Empty;
-        }
     }
 
 #if __ANDROID__
@@ -163,6 +182,12 @@ namespace Acr.IO {
 			}
 		}
 
+		public string FullName {
+			get {
+				return Path.Combine(path, name);
+			}
+		}
+
 		public string Extension {
 			get {
 				return Path.GetExtension(this.Name);
@@ -196,6 +221,12 @@ namespace Acr.IO {
             }
         }
 
+		public Uri Uri {
+			get {
+				return new UriBuilder("file", "/android_asset", 80, FullName).Uri;
+			}
+		}
+
 		#endregion
 
 
@@ -214,85 +245,17 @@ namespace Acr.IO {
 
 #elif __IOS__
 
-public class IOSAssetsFile : IReadOnlyFile {
+	public class IOSAssetsFile : AbstractReadOnlyFile {
 
-		string name;
-		string path = "";
-
-		public IOSAssetsFile (string name, string path = "")
+		public IOSAssetsFile (string name, string path = ""):base(Path.Combine(path ?? NSBundle.MainBundle.BundlePath, name))
 		{
-			this.path = path;
-			this.name = name;
 		}
 
-		#region IBaseFile implementation
-
-		public Stream OpenRead ()
+		public IOSAssetsFile (FileInfo info) : base (info)
 		{
-			//TODO:use stream
-			return new FileStream(
-		}
-
-		public IFile CopyTo (string path)
-		{
-			//TODO:use stream
-			throw new NotImplementedException ();
-		}
-
-		public string Name {
-			get {
-				return name;
-			}
-		}
-
-		public string Extension {
-			get {
-				return Path.GetExtension(this.Name);
-			}
-		}
-
-		public bool Exists {
-			get {				
-				return ;
-			}
-		}
-
-		public IReadOnlyDirectory Directory {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-
-		public long Length {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		private string mimeType;
-        public string MimeType {
-            get {
-                this.mimeType = this.mimeType ?? GetMimeType();
-                return this.mimeType;
-            }
-        }
-
-		#endregion
-
-
-		string GetMimeType ()
-		{
-			var ext = Path.GetExtension(this.Name);
-
-			if (ext == null)
-				return "*.*";
-
-			ext = ext.ToLower().TrimStart('.');
-			var mimeType = Android.Webkit.MimeTypeMap.Singleton.GetMimeTypeFromExtension(ext);
-			return mimeType ?? "*.*";
 		}
 	}
+
 #endif
 
 

@@ -9,8 +9,6 @@ namespace Acr.IO {
 
 	public interface IDirectory : IBaseDirectory<IDirectory, IFile> {
 
-        string FullName { get; }
-
         void Create();
         void MoveTo(string path);
         void Delete(bool recursive = false);
@@ -28,6 +26,7 @@ namespace Acr.IO {
     public interface IBaseDirectory<T, TF> {
 
 		string Name { get; }
+		string FullName { get; }
 
 		bool Exists { get; }
 
