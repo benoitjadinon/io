@@ -3,6 +3,8 @@ using System.Linq;
 using System.Reflection;
 using Acr.IO;
 using Xamarin.Forms;
+using System.IO;
+using System.Threading.Tasks;
 
 
 namespace Samples {
@@ -11,6 +13,7 @@ namespace Samples {
 
         public App() {
 			Button uriButton;
+			Button copyButton;
 
             this.MainPage = new NavigationPage();
             (this.MainPage as NavigationPage).PushAsync(
@@ -75,15 +78,15 @@ namespace Samples {
 	                            FontSize = 10,
 	                        },
 							new Label {
-								Text = "Assets/Resources sub-directory 'SubFolder' exists ? : " + (FileSystem.Instance.Assets.GetSubDirectory("SubFolder").Exists ? "yes" : "no"),
+								Text = "Assets/Resources sub-directory 'SubFolder' exists ? : " + (FileSystem.Instance.Assets.GetDirectory("SubFolder").Exists ? "yes" : "no"),
 	                            FontSize = 10,
 	                        },
 							new Label {
-								Text = "Assets/Resources sub-directory files : " + FileSystem.Instance.Assets.GetSubDirectory("SubFolder").Files?.Count(),
+								Text = "Assets/Resources sub-directory files : " + FileSystem.Instance.Assets.GetDirectory("SubFolder").Files?.Count(),
 	                            FontSize = 10,
 	                        },
 							new Label {
-								Text = "Assets/Resources sub-directory file Icon.Png ? " + (FileSystem.Instance.Assets.GetSubDirectory("SubFolder").GetFile("Icon.png").Exists ? "yes" : "no"),
+								Text = "Assets/Resources sub-directory file Icon.Png ? " + (FileSystem.Instance.Assets.GetDirectory("SubFolder").GetFile("Icon.png").Exists ? "yes" : "no"),
 	                            FontSize = 10,
 	                        },
 							new Label {
@@ -91,11 +94,15 @@ namespace Samples {
 	                            FontSize = 10,
 	                        },
 							new Label {
-								Text = "Assets/Resources uri file Icon.Png ? " + (FileSystem.Instance.Assets.GetSubDirectory("SubFolder").GetFile("Icon.png").Uri),
+								Text = "Assets/Resources uri file Icon.Png ? " + (FileSystem.Instance.Assets.GetDirectory("SubFolder").GetFile("Icon.png").Uri),
 	                            FontSize = 10,
 	                        },
 							(uriButton = new Button {
 								Text = "Open Uri ",
+	                            FontSize = 10,
+	                        }),
+							(copyButton = new Button {
+								Text = "Copy File from Assets to Public (async)",
 	                            FontSize = 10,
 	                        }),
 						}
@@ -103,7 +110,18 @@ namespace Samples {
                 }
             });
 
-			uriButton.Clicked += async (object sender, EventArgs e) => OpenWebView(FileSystem.Instance.Assets.GetSubDirectory("SubFolder").GetFile("Icon.png").Uri);
+			uriButton.Clicked += (object sender, EventArgs e) => OpenWebView(FileSystem.Instance.Assets.GetDirectory("SubFolder").GetFile("Icon.png").Uri);
+			copyButton.Clicked += async (object sender, EventArgs e) => {
+				copyButton.IsEnabled = false;
+				var targetFile = FileSystem.Instance.Public.GetFile("acr.io.asset.copy.test.TOREMOVE.png");
+				await FileSystem.Instance.Assets.GetDirectory ("SubFolder").GetFile ("Icon.png").CopyToAsync (targetFile.FullName);
+				copyButton.Text += " Copy " + (targetFile.Exists?"OK":"FAIL");
+				await Task.Delay(1500);
+				copyButton.IsEnabled = true;
+				OpenWebView(targetFile.Uri);
+				await Task.Delay(1500);
+				targetFile.DeleteIfExists();
+			};
         }
 
 		protected void OpenWebView (Uri uri)

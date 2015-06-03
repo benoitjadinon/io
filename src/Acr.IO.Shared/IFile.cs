@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 
 
 namespace Acr.IO {
@@ -39,6 +40,7 @@ namespace Acr.IO {
 		Stream OpenRead();
 
 		IFile CopyTo(string path);
+		Task<IFile> CopyToAsync(string path);
 
 		TD Directory { get; }
     }

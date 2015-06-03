@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 #if __ANDROID__
 using Android.App;
@@ -12,11 +13,11 @@ using Foundation;
 
 namespace Acr.IO {
 
-	public class AbstractReadOnlyFile : IReadOnlyFile
+	public abstract class AbstractReadOnlyFile : IReadOnlyFile
 	{
 		protected readonly FileInfo info;
 
-		public AbstractReadOnlyFile(string fileName) : this(new FileInfo(fileName)) {}
+		internal AbstractReadOnlyFile(string fileName) : this(new FileInfo(fileName)) {}
 		internal AbstractReadOnlyFile(FileInfo info) {
             this.info = info;
         }
@@ -27,18 +28,36 @@ namespace Acr.IO {
             return this.info.OpenRead();
         }
 
-        public IFile CopyTo(string path) {
-            var file = this.info.CopyTo(path);
-            return new File(file);
-        }
+		public IFile CopyTo (string path)
+		{
+			var file = new File (path);
+			using (Stream readStream = OpenRead()) {
+				using (Stream writeStream = file.Create ()) {
+					readStream.CopyTo(writeStream);
+				}
+		    }
+		    return file;
+		}
+		public async Task<IFile> CopyToAsync (string path)
+		{
+			var file = new File (path);
+			using (Stream readStream = OpenRead()) {
+				using (Stream writeStream = file.Create ()) {
+					await readStream.CopyToAsync(writeStream);
+				}
+		    }
+		    return file;
+		}
 
 		public string Name {
             get { return this.info.Name; }
         }
 
-
-        public string Extension {
-            get { return this.info.Extension; }
+		public string Extension {
+			get {
+				return Path.GetExtension (this.Name);
+				//return this.info.Extension;
+			}
         }
 
 
@@ -61,7 +80,7 @@ namespace Acr.IO {
 
 		public IReadOnlyDirectory Directory {
 			get {
-				throw new NotImplementedException ();
+				throw new NotImplementedException();
 			}
 		}
 
@@ -73,7 +92,7 @@ namespace Acr.IO {
 
 		#endregion
 
-		protected string GetMimeType() {
+		protected virtual string GetMimeType() {
 			var ext = Path.GetExtension(this.Name);
 //			if (ext == null)
 //				return String.Empty;
@@ -149,38 +168,66 @@ namespace Acr.IO {
 
 #if __ANDROID__
 
-	public class AndroidAssetFile : IReadOnlyFile {
+	public class AndroidAssetFile : AbstractReadOnlyFile {
 
 		readonly AssetManager assetManager;
 
 		string name;
 		string path = "";
 
-		public AndroidAssetFile (string name, string path = "")
+		public AndroidAssetFile (string name):base(name)
+		{
+			assetManager = Application.Context.Assets;
+			this.name = name;
+		}
+		public AndroidAssetFile (string name, string path):this(name)
 		{
 			this.path = path;
-			this.name = name;
-			assetManager = Application.Context.Assets;
 		}
 
 		#region IBaseFile implementation
 
-		public Stream OpenRead ()
+		public override Stream OpenRead ()
 		{
-			return assetManager.Open(name);
+			return assetManager.Open(FullName);
 		}
 
-		public IFile CopyTo (string path)
-		{
-			//TODO:use stream
-			throw new NotImplementedException ();
-		}
-
-		public string Name {
+		public override string Name {
 			get {
 				return name;
 			}
 		}
+
+		public override bool Exists {
+			get {				
+				return assetManager.List (path).Any (p => p == this.name);
+			}
+		}
+
+		public override IReadOnlyDirectory Directory {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+
+		public override long Length {
+			get {
+				return assetManager.OpenFd(name).Length;
+			}
+		}
+
+		public override Uri Uri {
+			get {
+				//TODO: not sure, file:///android_asset is only usable by a webview, is it the only purpose of .Uri ?
+				//https://android.googlesource.com/platform/frameworks/base.git/+/android-4.2.2_r1/core/java/android/webkit/URLUtil.java
+				var urib = new UriBuilder("file", "/android_asset");
+				urib.Path = FullName;
+				return urib.Uri;
+			}
+		}
+
+		#endregion
 
 		public string FullName {
 			get {
@@ -188,49 +235,7 @@ namespace Acr.IO {
 			}
 		}
 
-		public string Extension {
-			get {
-				return Path.GetExtension(this.Name);
-			}
-		}
-
-		public bool Exists {
-			get {				
-				return assetManager.List (path).Any (p => p == this.name);
-			}
-		}
-
-		public IReadOnlyDirectory Directory {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-
-		public long Length {
-			get {
-				return assetManager.OpenFd(name).Length;
-			}
-		}
-
-		private string mimeType;
-        public string MimeType {
-            get {
-                this.mimeType = this.mimeType ?? GetMimeType();
-                return this.mimeType;
-            }
-        }
-
-		public Uri Uri {
-			get {
-				return new UriBuilder("file", "/android_asset", 80, FullName).Uri;
-			}
-		}
-
-		#endregion
-
-
-		string GetMimeType ()
+		protected override string GetMimeType ()
 		{
 			var ext = Path.GetExtension(this.Name);
 
@@ -247,7 +252,8 @@ namespace Acr.IO {
 
 	public class IOSAssetsFile : AbstractReadOnlyFile {
 
-		public IOSAssetsFile (string name, string path = ""):base(Path.Combine(path ?? NSBundle.MainBundle.BundlePath, name))
+		public IOSAssetsFile (string name, string path = "")
+			:base(Path.Combine(path ?? NSBundle.MainBundle.BundlePath, name))
 		{
 		}
 

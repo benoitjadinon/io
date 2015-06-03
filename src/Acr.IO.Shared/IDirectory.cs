@@ -32,7 +32,7 @@ namespace Acr.IO {
 
 		bool FileExists(string fileName);
 
-		T GetSubDirectory(string dirName);
+		T GetDirectory(string dirName);
 		IEnumerable<T> Directories { get; }
 
 		TF GetFile(string name);

@@ -108,7 +108,7 @@ namespace Acr.IO {
             this.info.Delete(recursive);
         }
 
-		public IDirectory GetSubDirectory (string dirName)
+		public IDirectory GetDirectory (string dirName)
 		{
 			return new Directory(Path.Combine(info.FullName, dirName));
 		}
@@ -180,7 +180,7 @@ namespace Acr.IO {
 			}
 		}
 
-		public IReadOnlyDirectory GetSubDirectory (string dirName)
+		public IReadOnlyDirectory GetDirectory (string dirName)
 		{
 			return new AndroidAssetDirectory(root:path, subPath:dirName);
 		}
@@ -254,7 +254,7 @@ namespace Acr.IO {
 			}
 		}
 
-		public IReadOnlyDirectory GetSubDirectory (string dirName)
+		public IReadOnlyDirectory GetDirectory (string dirName)
 		{
 			return new IOSAssetsDirectory(root:path, subPath:dirName);
 		}
