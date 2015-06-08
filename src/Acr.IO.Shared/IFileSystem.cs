@@ -10,7 +10,7 @@ namespace Acr.IO {
         IDirectory Temp { get; }
 		IReadOnlyDirectory Assets { get; }
 
-        IDirectory GetDirectory(string path);
-        IFile GetFile(string path);
+        //IDirectory GetDirectory(string path);
+        //IFile GetFile(string path);
     }
 }

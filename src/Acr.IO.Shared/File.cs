@@ -4,31 +4,24 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-#if __ANDROID__
-using Android.App;
-using Android.Content.Res;
-#elif __IOS__
-using Foundation;
-#endif
-
 namespace Acr.IO {
 
 	public abstract class AbstractReadOnlyFile : IReadOnlyFile
 	{
-		protected readonly FileInfo info;
+		protected readonly FileInfo Info;
 
 		internal AbstractReadOnlyFile(string fileName) : this(new FileInfo(fileName)) {}
 		internal AbstractReadOnlyFile(FileInfo info) {
-            this.info = info;
+            this.Info = info;
         }
 
 		#region IBaseFile implementation
 
-        public Stream OpenRead() {
-            return this.info.OpenRead();
+		public virtual Stream OpenRead() {
+            return this.Info.OpenRead();
         }
 
-		public IFile CopyTo (string path)
+		public virtual IFile CopyTo (string path)
 		{
 			var file = new File (path);
 			using (Stream readStream = OpenRead()) {
@@ -38,7 +31,7 @@ namespace Acr.IO {
 		    }
 		    return file;
 		}
-		public async Task<IFile> CopyToAsync (string path)
+		public virtual async Task<IFile> CopyToAsync (string path)
 		{
 			var file = new File (path);
 			using (Stream readStream = OpenRead()) {
@@ -49,11 +42,11 @@ namespace Acr.IO {
 		    return file;
 		}
 
-		public string Name {
-            get { return this.info.Name; }
+		public virtual string Name {
+            get { return this.Info.Name; }
         }
 
-		public string Extension {
+		public virtual string Extension {
 			get {
 				return Path.GetExtension (this.Name);
 				//return this.info.Extension;
@@ -62,31 +55,31 @@ namespace Acr.IO {
 
 
         private string mimeType;
-        public string MimeType {
+		public virtual string MimeType {
             get {
                 this.mimeType = this.mimeType ?? GetMimeType();
                 return this.mimeType;
             }
         }
 
-        public long Length {
-            get { return this.info.Length; }
+		public virtual long Length {
+            get { return this.Info.Length; }
         }
 
 
-        public bool Exists {
-            get { return this.info.Exists; }
+		public virtual bool Exists {
+            get { return this.Info.Exists; }
         }
 
-		public IReadOnlyDirectory Directory {
+		public virtual IReadOnlyDirectory Directory {
 			get {
 				throw new NotImplementedException();
 			}
 		}
 
-		public Uri Uri {
+		public virtual Uri Uri {
 			get {
-				return new UriBuilder("file", info.FullName).Uri;
+				return new UriBuilder("file", Info.FullName).Uri;
 			}
 		}
 
@@ -94,6 +87,7 @@ namespace Acr.IO {
 
 		protected virtual string GetMimeType() {
 			var ext = Path.GetExtension(this.Name);
+			//TODO
 //			if (ext == null)
 //				return String.Empty;
 //
@@ -118,151 +112,53 @@ namespace Acr.IO {
         #region IFile Members
 
 		public string FullName {
-            get { return this.info.FullName; }
+            get { return this.Info.FullName; }
         }
 
 
         public Stream Create() {
-            return this.info.Create();
+            return this.Info.Create();
         }
 
         public Stream OpenWrite() {
-            return this.info.OpenWrite();
+            return this.Info.OpenWrite();
         }
 
 
         public void MoveTo(string path) {
-            this.info.MoveTo(path);
+            this.Info.MoveTo(path);
         }
 
         public void Delete() {
-            this.info.Delete();
+            this.Info.Delete();
         }
 
 
         private Directory directory; 
         public IDirectory Directory {
             get {
-                this.directory = this.directory ?? new Directory(this.info.Directory);
+                this.directory = this.directory ?? new Directory(this.Info.Directory);
                 return this.directory;
             }
         }
 
 
         public DateTime LastAccessTime {
-            get { return this.info.LastAccessTime; }
+            get { return this.Info.LastAccessTime; }
         }
 
 
         public DateTime LastWriteTime {
-            get { return this.info.LastWriteTime; }
+            get { return this.Info.LastWriteTime; }
         }
 
 
         public DateTime CreationTime {
-            get { return this.info.CreationTime; }
+            get { return this.Info.CreationTime; }
         }
 
         #endregion
     }
-
-#if __ANDROID__
-
-	public class AndroidAssetFile : AbstractReadOnlyFile {
-
-		readonly AssetManager assetManager;
-
-		string name;
-		string path = "";
-
-		public AndroidAssetFile (string name):base(name)
-		{
-			assetManager = Application.Context.Assets;
-			this.name = name;
-		}
-		public AndroidAssetFile (string name, string path):this(name)
-		{
-			this.path = path;
-		}
-
-		#region IBaseFile implementation
-
-		public override Stream OpenRead ()
-		{
-			return assetManager.Open(FullName);
-		}
-
-		public override string Name {
-			get {
-				return name;
-			}
-		}
-
-		public override bool Exists {
-			get {				
-				return assetManager.List (path).Any (p => p == this.name);
-			}
-		}
-
-		public override IReadOnlyDirectory Directory {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-
-		public override long Length {
-			get {
-				return assetManager.OpenFd(name).Length;
-			}
-		}
-
-		public override Uri Uri {
-			get {
-				//TODO: not sure, file:///android_asset is only usable by a webview, is it the only purpose of .Uri ?
-				//https://android.googlesource.com/platform/frameworks/base.git/+/android-4.2.2_r1/core/java/android/webkit/URLUtil.java
-				var urib = new UriBuilder("file", "/android_asset");
-				urib.Path = FullName;
-				return urib.Uri;
-			}
-		}
-
-		#endregion
-
-		public string FullName {
-			get {
-				return Path.Combine(path, name);
-			}
-		}
-
-		protected override string GetMimeType ()
-		{
-			var ext = Path.GetExtension(this.Name);
-
-			if (ext == null)
-				return "*.*";
-
-			ext = ext.ToLower().TrimStart('.');
-			var mimeType = Android.Webkit.MimeTypeMap.Singleton.GetMimeTypeFromExtension(ext);
-			return mimeType ?? "*.*";
-		}
-	}
-
-#elif __IOS__
-
-	public class IOSAssetsFile : AbstractReadOnlyFile {
-
-		public IOSAssetsFile (string name, string path = "")
-			:base(Path.Combine(path ?? NSBundle.MainBundle.BundlePath, name))
-		{
-		}
-
-		public IOSAssetsFile (FileInfo info) : base (info)
-		{
-		}
-	}
-
-#endif
 
 
 }
