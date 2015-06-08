@@ -6,19 +6,19 @@ using System.IO;
 
 namespace Acr.IO
 {
-	public class AssetFile : AbstractReadOnlyFile 
+	public class AndroidAssetFileImpl : AbstractReadOnlyFile 
 	{
 		readonly AssetManager assetManager;
 
 		string name;
 		string path = "";
 
-		public AssetFile (string name):base(name)
+		public AndroidAssetFileImpl (string name):base(name)
 		{
 			assetManager = Application.Context.Assets;
 			this.name = name;
 		}
-		public AssetFile (string name, string path):this(name)
+		public AndroidAssetFileImpl (string name, string path):this(name)
 		{
 			this.path = path;
 		}

@@ -20,7 +20,7 @@ namespace Acr.IO
                 this.Temp = new Directory(cacheDir.AbsolutePath);
             }
 
-			this.Assets = new AssetsDirectoryImpl();
+			this.Assets = new AndroidAssetsDirectoryImpl();
 		}
 	}
 }

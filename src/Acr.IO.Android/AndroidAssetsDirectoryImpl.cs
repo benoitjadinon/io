@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace Acr.IO
 {
-	public class AssetsDirectoryImpl : IReadOnlyDirectory {
+	public class AndroidAssetsDirectoryImpl : IReadOnlyDirectory {
 
 		//TODO: parent support
 		//TODO: lazy?
@@ -15,12 +15,12 @@ namespace Acr.IO
 
 		string path;
 
-		public AssetsDirectoryImpl (string path = "")
+		public AndroidAssetsDirectoryImpl (string path = "")
 		{
 			this.path = path;
 			assetManager = Application.Context.Assets;
 		}
-		public AssetsDirectoryImpl (string root, string subPath)
+		public AndroidAssetsDirectoryImpl (string root, string subPath)
 			:this(Path.Combine(root, subPath))
 		{
 		}
@@ -35,7 +35,7 @@ namespace Acr.IO
 
 		public virtual IReadOnlyFile GetFile (string name)
 		{
-			return new AssetFile(name, path);
+			return new AndroidAssetFileImpl(name, path);
 		}
 
 		public virtual string Name {
@@ -59,14 +59,14 @@ namespace Acr.IO
 
 		public IReadOnlyDirectory GetDirectory (string dirName)
 		{
-			return new AssetsDirectoryImpl(root:path, subPath:dirName);
+			return new AndroidAssetsDirectoryImpl(root:path, subPath:dirName);
 		}
 
 		private IEnumerable<IReadOnlyDirectory> directories;
 		public virtual IEnumerable<IReadOnlyDirectory> Directories {
 			get {
 				return directories ?? (directories = assetManager.List(path).Where(p => assetManager.List(p).Length > 0)
-					.Select(p => new AssetsDirectoryImpl(p)));
+					.Select(p => new AndroidAssetsDirectoryImpl(p)));
 			}
 		}
 
@@ -74,7 +74,7 @@ namespace Acr.IO
 		public virtual IEnumerable<IReadOnlyFile> Files {
 			get {
 				return files ?? (files = assetManager.List(path).Where(p => assetManager.List(p).Length == 0)
-					.Select(p => new AssetFile(p, path)));
+					.Select(p => new AndroidAssetFileImpl(p, path)));
 			}
 		}
 

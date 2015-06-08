@@ -14,11 +14,13 @@ namespace Acr.IO
                 : Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
             var library = Path.Combine(documents, "..", "Library");
+
             this.AppData = new Directory(library);
             this.Cache = new Directory(Path.Combine(library, "Caches"));
             this.Temp = new Directory(Path.Combine(documents, "..", "tmp"));
             this.Public = new Directory(documents);
-			this.Assets = new AssetsDirectoryImpl();
+
+			this.Assets = new IOSAssetsDirectoryImpl();
 		}
 	}
 }

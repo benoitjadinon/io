@@ -1,24 +1,25 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using Foundation;
 
 namespace Acr.IO
 {
-	public class IOSAssetsDirectory : IReadOnlyDirectory {
+	public class IOSAssetsDirectoryImpl : IReadOnlyDirectory {
 
 		readonly string path;
 
-		public IOSAssetsDirectory (string path = "")
+		public IOSAssetsDirectoryImpl (string path = "")
 		{
 			this.path = !string.IsNullOrEmpty(path) ? path : NSBundle.MainBundle.BundlePath;
 			this.info = new DirectoryInfo(this.path);
 		}
-		public IOSAssetsDirectory (string root, string subPath)
+		public IOSAssetsDirectoryImpl (string root, string subPath)
 			:this(Path.Combine(root, subPath))
 		{
 		}
-		protected IOSAssetsDirectory (DirectoryInfo info) : this (info?.FullName)
+		protected IOSAssetsDirectoryImpl (DirectoryInfo info) : this (info?.FullName)
 		{
 		}
 
@@ -32,7 +33,7 @@ namespace Acr.IO
 
 		public virtual IReadOnlyFile GetFile (string name)
 		{
-			return new IOSAssetsFile(name, path);
+			return new IOSAssetFileImpl(name, path);
 		}
 
 		public virtual string Name {
@@ -55,20 +56,20 @@ namespace Acr.IO
 
 		public IReadOnlyDirectory GetDirectory (string dirName)
 		{
-			return new IOSAssetsDirectory(root:path, subPath:dirName);
+			return new IOSAssetsDirectoryImpl(root:path, subPath:dirName);
 		}
 
 		private IEnumerable<IReadOnlyDirectory> directories;
 		public virtual IEnumerable<IReadOnlyDirectory> Directories {
             get {
-				return this.directories ?? (this.directories = Info.GetDirectories().Select(x => new IOSAssetsDirectory(x)).ToList());
+				return this.directories ?? (this.directories = Info.GetDirectories().Select(x => new IOSAssetsDirectoryImpl(x)).ToList());
             }
         }
 
 		private IEnumerable<IReadOnlyFile> files;
 		public virtual IEnumerable<IReadOnlyFile> Files {
 			get {
-				return this.files ?? (this.files = Info.GetFiles().Select(x => new IOSAssetsFile(x)).ToList());
+				return this.files ?? (this.files = Info.GetFiles().Select(x => new IOSAssetFileImpl(x)).ToList());
 			}
 		}
 

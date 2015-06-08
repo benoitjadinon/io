@@ -38,8 +38,8 @@
     <Compile Include="Utils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FileSystemImpl.cs" />
-    <Compile Include="AssetsDirectoryImpl.cs" />
-    <Compile Include="AssetFileImpl.cs" />
+    <Compile Include="IOSAssetFileImpl.cs" />
+    <Compile Include="IOSAssetsDirectoryImpl.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
