@@ -7,7 +7,7 @@ namespace Acr.IO
 	public class IOSAssetFileImpl : AbstractReadOnlyFile {
 
 		public IOSAssetFileImpl (string name, string path = "")
-			:base(Path.Combine(path ?? NSBundle.MainBundle.BundlePath, name))
+			:base(Path.Combine(String.IsNullOrEmpty(path) ? NSBundle.MainBundle.BundlePath : path, name))
 		{
 		}
 
@@ -19,7 +19,7 @@ namespace Acr.IO
 
 		public override IReadOnlyDirectory Directory {
 			get {
-				throw new NotImplementedException ();
+				return new IOSAssetsDirectoryImpl(Info.Directory);
 			}
 		}
 

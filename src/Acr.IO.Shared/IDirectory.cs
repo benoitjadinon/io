@@ -5,6 +5,7 @@ using System.Collections.Generic;
 namespace Acr.IO {
 
 	public interface IReadOnlyDirectory : IBaseDirectory<IReadOnlyDirectory, IReadOnlyFile> {
+		IReadOnlyDirectory GetRoot();
 	}
 
 	public interface IDirectory : IBaseDirectory<IDirectory, IFile> {

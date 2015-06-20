@@ -8,22 +8,36 @@ namespace Acr.IO
 {
 	public class IOSAssetsDirectoryImpl : IReadOnlyDirectory {
 
+		readonly string root;
 		readonly string path;
 
 		public IOSAssetsDirectoryImpl (string path = "")
 		{
-			this.path = !string.IsNullOrEmpty(path) ? path : NSBundle.MainBundle.BundlePath;
+			this.root = NSBundle.MainBundle.BundlePath;
+			if (!string.IsNullOrEmpty(path)) {
+				if (!path.StartsWith(root, StringComparison.InvariantCulture))
+					this.path = Path.Combine(root, path);
+				else
+					this.path = path;
+			}else {
+				this.path = root;
+			}
 			this.info = new DirectoryInfo(this.path);
 		}
-		public IOSAssetsDirectoryImpl (string root, string subPath)
-			:this(Path.Combine(root, subPath))
+		public IOSAssetsDirectoryImpl (string path, string subPath)
+			:this(Path.Combine(path, subPath))
 		{
 		}
-		protected IOSAssetsDirectoryImpl (DirectoryInfo info) : this (info?.FullName)
+		internal IOSAssetsDirectoryImpl (DirectoryInfo info) : this (info?.FullName)
 		{
 		}
 
-		#region IDirectory implementation
+		#region IReadOnlyDirectory implementation
+
+		public IReadOnlyDirectory GetRoot ()
+		{
+			return new IOSAssetsDirectoryImpl();
+		}
 
 		public virtual bool FileExists (string fileName)
 		{
@@ -56,7 +70,7 @@ namespace Acr.IO
 
 		public IReadOnlyDirectory GetDirectory (string dirName)
 		{
-			return new IOSAssetsDirectoryImpl(root:path, subPath:dirName);
+			return new IOSAssetsDirectoryImpl(path:path, subPath:dirName);
 		}
 
 		private IEnumerable<IReadOnlyDirectory> directories;

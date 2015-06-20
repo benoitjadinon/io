@@ -9,23 +9,28 @@ namespace Acr.IO
 {
 	public class AndroidAssetsDirectoryImpl : IReadOnlyDirectory {
 
-		//TODO: parent support
+		//TODO: parent support, then exists
 		//TODO: lazy?
 		readonly AssetManager assetManager;
 
-		string path;
+		readonly string path;
 
 		public AndroidAssetsDirectoryImpl (string path = "")
 		{
 			this.path = path;
 			assetManager = Application.Context.Assets;
 		}
-		public AndroidAssetsDirectoryImpl (string root, string subPath)
-			:this(Path.Combine(root, subPath))
+		protected AndroidAssetsDirectoryImpl (string root, string subPath)
+			:this(root != "" ? Path.Combine(root, subPath) : subPath)
 		{
 		}
 
 		#region IReadOnlyDirectory implementation
+
+		public IReadOnlyDirectory GetRoot ()
+		{
+			return new AndroidAssetsDirectoryImpl("");
+		}
 
 		public virtual bool FileExists (string fileName)
 		{
@@ -35,7 +40,10 @@ namespace Acr.IO
 
 		public virtual IReadOnlyFile GetFile (string name)
 		{
-			return new AndroidAssetFileImpl(name, path);
+			if (path != "")
+				return new AndroidAssetFileImpl(path, name);
+			else
+				return new AndroidAssetFileImpl(name);
 		}
 
 		public virtual string Name {
