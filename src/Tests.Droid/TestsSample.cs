@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using Acr.IO;
 
-namespace Tests.Droid
+namespace Tests
 {
 	[TestFixture]
 	public class TestsSample
@@ -56,6 +56,28 @@ namespace Tests.Droid
 		{
 			Assert.False(ass.GetDirectory("NonExistingSubFolder").Exists);
 		}
+		[Test]
+		public void AssetSubDirectoryNotExistsWithFile ()
+		{
+			var dir = ass.GetDirectory ("NonExistingSubFolder");
+			Assert.IsNotNull(dir);
+			Assert.False(dir.Exists);
+			Assert.False(dir.FileExists("NonExistingFile.png"));
+		}
+
+		[Test]
+		public void AssetSubSubDirectoryNotExists ()
+		{
+			Assert.False(ass.GetDirectory("NonExistingSubFolder/Neither").Exists);
+		}
+		[Test]
+		public void AssetSubSubDirectoryNotExistsWithFile ()
+		{
+			var dir = ass.GetDirectory ("NonExistingSubFolder/Neither");
+			Assert.IsNotNull(dir);
+			Assert.False(dir.Exists);
+			Assert.False(dir.FileExists("NonExistingFile.png"));
+		}
 
 		[Test]
 		public void AssetSubDirectoryFileExists ()
@@ -73,7 +95,7 @@ namespace Tests.Droid
 		[Test]
 		public async void AssetCopyToTempDirectory ()
 		{
-			string guid = new Guid().ToString();
+			string guid = Guid.NewGuid().ToString();
 			var tmpPath = FileSystem.Instance.Temp.GetFile(guid);
 
 			var file = ass.GetFile (RootAssetFile);

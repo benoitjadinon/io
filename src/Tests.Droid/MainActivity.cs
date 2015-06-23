@@ -4,7 +4,7 @@ using Android.App;
 using Android.OS;
 using Xamarin.Android.NUnitLite;
 
-namespace Tests.Droid
+namespace Tests
 {
 	[Activity (Label = "Tests.Droid", MainLauncher = true)]
 	public class MainActivity : TestSuiteActivity
@@ -12,9 +12,9 @@ namespace Tests.Droid
 		protected override void OnCreate (Bundle bundle)
 		{
 			// tests can be inside the main assembly
-			AddTest (Assembly.GetExecutingAssembly ());
+			//AddTest (Assembly.GetExecutingAssembly ());
 			// or in any reference assemblies
-			// AddTest (typeof (Your.Library.TestClass).Assembly);
+			AddTest (typeof (TestsSample).Assembly);
 
 			// Once you called base.OnCreate(), you cannot add more assemblies.
 			base.OnCreate (bundle);

@@ -20,8 +20,8 @@ namespace Acr.IO
 			this.path = path;
 			assetManager = Application.Context.Assets;
 		}
-		protected AndroidAssetsDirectoryImpl (string root, string subPath)
-			:this(root != "" ? Path.Combine(root, subPath) : subPath)
+		protected AndroidAssetsDirectoryImpl (string name, string rootName)
+			:this(rootName != "" ? Path.Combine(rootName, name) : name)
 		{
 		}
 
@@ -41,7 +41,7 @@ namespace Acr.IO
 		public virtual IReadOnlyFile GetFile (string name)
 		{
 			if (path != "")
-				return new AndroidAssetFileImpl(path, name);
+				return new AndroidAssetFileImpl(name, path);
 			else
 				return new AndroidAssetFileImpl(name);
 		}
@@ -60,14 +60,21 @@ namespace Acr.IO
 
 		public virtual bool Exists {
 			get {
-				// TODO: list parent and search for itself
-				return true;
+				if (string.IsNullOrEmpty (path))
+					return true;
+				else {
+					string parentPath = ""; // root by default
+					if (path.Contains (Path.DirectorySeparatorChar)) {
+						parentPath = path.Substring (0, path.LastIndexOf (Path.DirectorySeparatorChar));
+					}
+					return new AndroidAssetsDirectoryImpl (parentPath).Directories.Any (p => p.Name == this.Name);
+				}
 			}
 		}
 
 		public IReadOnlyDirectory GetDirectory (string dirName)
 		{
-			return new AndroidAssetsDirectoryImpl(root:path, subPath:dirName);
+			return new AndroidAssetsDirectoryImpl(name:path, rootName:dirName);
 		}
 
 		private IEnumerable<IReadOnlyDirectory> directories;
