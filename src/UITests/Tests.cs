@@ -27,12 +27,20 @@ namespace UITests
 		}
 
 		[Test]
-		public void AppLaunches ()
+		public void AssetsFolderExists () {
+			
+		}
+
+		[Test]
+		public void WebViewOpensTheFile ()
 		{
 			//app.Screenshot ("First screen.");
-			var but = app.Query().First(p => p.Text == "Open Uri ");
-			app.Tap();
-			app.
+			//var but = app.Query().First(p => p.Text == "Open Uri ");
+			var q = app.Query(p=>p.Button("Open Uri "));
+			//Assert.AreEqual(q.Count, 1);
+			app.Tap(p => p.Button("Open Uri "));
+			app.WaitForElement(p => p.WebView());
+
 		}
 	}
 }
