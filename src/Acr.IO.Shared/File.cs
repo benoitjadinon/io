@@ -33,7 +33,10 @@ namespace Acr.IO {
 		}
 		public virtual async Task<IFile> CopyToAsync (string path)
 		{
-			var file = new File (path);
+			return await CopyToAsync(new File (path));
+		}
+		public virtual async Task<IFile> CopyToAsync (IFile file)
+		{
 			using (Stream readStream = OpenRead()) {
 				using (Stream writeStream = file.Create ()) {
 					await readStream.CopyToAsync(writeStream);

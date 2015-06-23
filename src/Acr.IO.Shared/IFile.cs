@@ -41,6 +41,7 @@ namespace Acr.IO {
 
 		IFile CopyTo(string path);
 		Task<IFile> CopyToAsync(string path);
+		Task<IFile> CopyToAsync(IFile file);
 
 		TD Directory { get; }
     }
