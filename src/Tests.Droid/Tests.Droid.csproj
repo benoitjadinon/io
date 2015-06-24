@@ -48,7 +48,6 @@
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestsSample.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -67,6 +66,10 @@
     <ProjectReference Include="..\Acr.IO.Android\Acr.IO.Android.csproj">
       <Project>{89BC5EE7-8D42-4BDD-8BBC-50DBA700C0A9}</Project>
       <Name>Acr.IO.Android</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tests\Tests.csproj">
+      <Project>{7E4F38B6-E29A-48D1-9DCA-E0AB916AA85C}</Project>
+      <Name>Tests</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

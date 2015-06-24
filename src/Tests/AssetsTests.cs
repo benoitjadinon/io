@@ -1,17 +1,24 @@
 ﻿using System;
 using NUnit.Framework;
 using Acr.IO;
+using System.IO;
 
 namespace Tests
 {
 	[TestFixture]
-	public class TestsSample
+	public class AssetsTests
 	{
 		const string RootAssetFile = "Default.png";
 
 		const string SubDirectoryName = "SubFolder";
 
 		const string SubDirectoryFile = "Icon.png";
+
+		const string NonExistingFile = "NonExistingFile.png";
+
+		const string NonExistingSubFolder = "NonExistingSubFolder";
+
+		const string NonExistingSubSubFolder = "NonExistingSubSubFolder";
 
 
 		IReadOnlyDirectory ass;
@@ -43,7 +50,7 @@ namespace Tests
 		[Test]
 		public void AssetFileNotExists ()
 		{
-			Assert.False(ass.FileExists("NonExistingFile.png"));
+			Assert.False(ass.FileExists (NonExistingFile));
 		}
 
 		[Test]
@@ -54,29 +61,29 @@ namespace Tests
 		[Test]
 		public void AssetSubDirectoryNotExists ()
 		{
-			Assert.False(ass.GetDirectory("NonExistingSubFolder").Exists);
+			Assert.False(ass.GetDirectory (NonExistingSubFolder).Exists);
 		}
 		[Test]
 		public void AssetSubDirectoryNotExistsWithFile ()
 		{
-			var dir = ass.GetDirectory ("NonExistingSubFolder");
+			var dir = ass.GetDirectory (NonExistingSubFolder);
 			Assert.IsNotNull(dir);
 			Assert.False(dir.Exists);
-			Assert.False(dir.FileExists("NonExistingFile.png"));
+			Assert.False(dir.FileExists(NonExistingFile));
 		}
 
 		[Test]
 		public void AssetSubSubDirectoryNotExists ()
 		{
-			Assert.False(ass.GetDirectory("NonExistingSubFolder/Neither").Exists);
+			Assert.False(ass.GetDirectory(Path.Combine (NonExistingSubFolder, NonExistingSubSubFolder)).Exists);
 		}
 		[Test]
 		public void AssetSubSubDirectoryNotExistsWithFile ()
 		{
-			var dir = ass.GetDirectory ("NonExistingSubFolder/Neither");
+			var dir = ass.GetDirectory (Path.Combine(NonExistingSubFolder, NonExistingSubSubFolder));
 			Assert.IsNotNull(dir);
 			Assert.False(dir.Exists);
-			Assert.False(dir.FileExists("NonExistingFile.png"));
+			Assert.False(dir.FileExists(NonExistingFile));
 		}
 
 		[Test]
@@ -89,7 +96,7 @@ namespace Tests
 		{
 			var dir = ass.GetDirectory (SubDirectoryName);
 			Assert.IsNotNull(dir);
-			Assert.False(dir.FileExists("NonExistingFile.png"));
+			Assert.False(dir.FileExists(NonExistingFile));
 		}
 
 		[Test]
