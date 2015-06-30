@@ -28,7 +28,7 @@ namespace Acr.IO
 			:this(Path.Combine(path, subPath))
 		{
 		}
-		internal IOSAssetsDirectoryImpl (DirectoryInfo info) : this (info?.FullName)
+		internal IOSAssetsDirectoryImpl (DirectoryInfo info) : this (info == null ? null : info.FullName)
 		{
 		}
 

@@ -5,15 +5,27 @@ using Acr.IO;
 using Xamarin.Forms;
 using System.IO;
 using System.Threading.Tasks;
+using System.Collections;
 
 
 namespace Samples {
 
     public class App : Application {
 
+		const string AssetDefaultPNG = "Default.png";
+		const string AssetSubFolderIconPNG = "Icon.png";
+
+		const string AssetSubFolder = "SubFolder";
+
         public App() {
 			Button uriButton;
 			Button copyButton;
+
+			var assetsDirectories = FileSystem.Instance.Assets.Directories;
+            var assetFilesInRoot = FileSystem.Instance.Assets.Files;
+			var fileDefaultPNG = FileSystem.Instance.Assets.GetFile(AssetDefaultPNG);
+			var subFolder = FileSystem.Instance.Assets.GetDirectory (AssetSubFolder);
+			var fileSubIconPNG = subFolder.GetFile (AssetSubFolderIconPNG);
 
             this.MainPage = new NavigationPage();
             (this.MainPage as NavigationPage).PushAsync(
@@ -62,39 +74,39 @@ namespace Samples {
 	                            FontSize = 10,
 	                        },
 							new Label {
-								Text = "Assets/Resources Default.png exists ? " + (FileSystem.Instance.Assets.FileExists("Default.png") ? "yes":"no"),
+								Text = "Assets/Resources Default.png exists ? " + (FileSystem.Instance.Assets.FileExists (AssetDefaultPNG).PrettyPrint()),
 	                            FontSize = 10,
 	                        },
 							new Label {
-								Text = "Assets/Resources Get Default.png : " + FileSystem.Instance.Assets.GetFile("Default.png")?.OpenRead(),
+								Text = "Assets/Resources Get Default.png Stream : " + (fileDefaultPNG != null ? fileDefaultPNG.OpenRead().ToString() : "no stream"),
 	                            FontSize = 10,
 	                        },
 							new Label {
-								Text = "Assets/Resources Default.png Length : " + FileSystem.Instance.Assets.GetFile("Default.png")?.Length,
+								Text = "Assets/Resources Default.png Length : " + (fileDefaultPNG != null) ? fileDefaultPNG.Length : "Empty",
 	                            FontSize = 10,
 	                        },
 							new Label {
-								Text = "Assets/Resources sub-directories : " + FileSystem.Instance.Assets.Directories?.Count() + " : " + FileSystem.Instance.Assets.Directories?.Select(p=>p.Name).ToArray().PrintArray(),
+								Text = "Assets/Resources sub-directories : " + assetsDirectories.PrettyPrint() + " : " + assetsDirectories.Select(p=>p.Name).ToArray().PrettyPrint(),
 	                            FontSize = 10,
 	                        },
 							new Label {
-								Text = "Assets/Resources sub-directory 'SubFolder' exists ? : " + (FileSystem.Instance.Assets.GetDirectory("SubFolder").Exists ? "yes" : "no"),
+								Text = "Assets/Resources sub-directory 'SubFolder' exists ? : " + (subFolder.Exists.PrettyPrint()),
 	                            FontSize = 10,
 	                        },
 							new Label {
-								Text = "Assets/Resources sub-directory files : " + FileSystem.Instance.Assets.GetDirectory("SubFolder").Files?.Count(),
+								Text = "Assets/Resources sub-directory files : " + subFolder.Files.PrettyPrint(),
 	                            FontSize = 10,
 	                        },
 							new Label {
-								Text = "Assets/Resources sub-directory file Icon.Png ? " + (FileSystem.Instance.Assets.GetDirectory("SubFolder").GetFile("Icon.png").Exists ? "yes" : "no"),
+								Text = "Assets/Resources sub-directory file Icon.Png ? " + (fileSubIconPNG.Exists.PrettyPrint()),
 	                            FontSize = 10,
 	                        },
 							new Label {
-								Text = "Assets/Resources files in folder : " + FileSystem.Instance.Assets.Files?.Count(),
+								Text = "Assets/Resources files in folder : " + assetFilesInRoot.PrettyPrint(),
 	                            FontSize = 10,
 	                        },
 							new Label {
-								Text = "Assets/Resources uri file Icon.Png ? " + (FileSystem.Instance.Assets.GetDirectory("SubFolder").GetFile("Icon.png").Uri),
+								Text = "Assets/Resources uri file Icon.Png ? " + (fileSubIconPNG.Uri),
 	                            FontSize = 10,
 	                        },
 							(uriButton = new Button {
@@ -110,12 +122,12 @@ namespace Samples {
                 }
             });
 
-			uriButton.Clicked += (object sender, EventArgs e) => OpenWebView(FileSystem.Instance.Assets.GetDirectory("SubFolder").GetFile("Icon.png").Uri);
+			uriButton.Clicked += (object sender, EventArgs e) => OpenWebView(fileSubIconPNG.Uri);
 			copyButton.Clicked += async (object sender, EventArgs e) => {
 				copyButton.IsEnabled = false;
 				var targetFile = FileSystem.Instance.Public.GetFile("acr.io.asset.copy.test.TOREMOVE.png");
-				await FileSystem.Instance.Assets.GetDirectory ("SubFolder").GetFile ("Icon.png").CopyToAsync (targetFile.FullName);
-				copyButton.Text += " Copy " + (targetFile.Exists?"OK":"FAIL");
+				await fileSubIconPNG.CopyToAsync (targetFile.FullName);
+				copyButton.Text += " Copy " + targetFile.Exists.PrettyPrint();
 				await Task.Delay(1500);
 				copyButton.IsEnabled = true;
 				OpenWebView(targetFile.Uri);
@@ -134,13 +146,40 @@ namespace Samples {
 		}
     }
 
-    public static class ArrayExtensions {
-		public static string PrintArray(this object[] array, string sep = ","){
+    public static class ArrayExtensions 
+    {
+		public static string PrettyPrint(this object[] array, string sep = ",")
+		{
 			string ret = "";
 			foreach (var item in array ?? new string[0]) {
 				ret += item + sep;
 			}
 			return array.Any() ? ret.Substring(0, ret.Length-1) : ret;
         }
+    }
+
+    public static class BooleanExtensions 
+    {
+		public static string PrettyPrint(this bool boo)
+		{
+			return boo ? "yes" : "no";
+        }
+        public static string PrettyPrint (this bool? boo)
+		{
+			if (!boo.HasValue) 
+				return "null";
+
+			return boo.Value.PrettyPrint();
+		}
+    }
+
+    public static class IEnumerableExtensions
+    {
+    	public static string PrettyPrint(this IEnumerable list){
+    		if (list == null)
+    			return "null";
+
+    		return list.Count().ToString();
+    	}
     }
 }
