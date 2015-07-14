@@ -75,6 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
+    <Folder Include="Tests\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
@@ -83,6 +84,9 @@
   <ItemGroup>
     <Compile Include="Main.cs" />
     <Compile Include="UnitTestAppDelegate.cs" />
+    <Compile Include="..\Tests\AssetsTests.cs">
+      <Link>Tests\AssetsTests.cs</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
@@ -90,5 +94,15 @@
       <Project>{7E4F38B6-E29A-48D1-9DCA-E0AB916AA85C}</Project>
       <Name>Tests</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Acr.IO.iOS\Acr.IO.iOS.csproj">
+      <Project>{5833ED04-4638-472D-911A-728B7A03C0D1}</Project>
+      <Name>Acr.IO.iOS</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="..\Samples\Samples.Droid\Assets\SubFolder\Icon.png">
+      <Link>Resources\SubFolder\Icon.png</Link>
+    </BundleResource>
+    <BundleResource Include="Resources\Default.png" />
   </ItemGroup>
 </Project>

@@ -64,7 +64,7 @@ namespace Acr.IO
 
 		public virtual bool Exists {
 			get {
-				return true;
+				return this.info.Exists;
 			}
 		}
 

@@ -12,9 +12,9 @@ namespace Tests
 		protected override void OnCreate (Bundle bundle)
 		{
 			// tests can be inside the main assembly
-			//AddTest (Assembly.GetExecutingAssembly ());
+			AddTest (Assembly.GetExecutingAssembly ());
 			// or in any reference assemblies
-			AddTest (typeof (AssetsTests).Assembly);
+			//AddTest (typeof (AssetsTests).Assembly);
 
 			// Once you called base.OnCreate(), you cannot add more assemblies.
 			base.OnCreate (bundle);
